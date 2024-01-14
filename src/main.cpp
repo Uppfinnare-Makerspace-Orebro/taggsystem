@@ -1,4 +1,5 @@
 #include "Arduino.h"
+#include "archive.h"
 #include "cardreader.h"
 #include "state.h"
 #include "users.h"
@@ -23,7 +24,20 @@ bool isButtonPressed() {
     return digitalRead(buttonIn);
 }
 
+void flash(int num) {
+    for (int i = 0; i < num; ++i) {
+        digitalWrite(ledPin, 1);
+        delay(100);
+        digitalWrite(ledPin, 0);
+        delay(100);
+    }
+    delay(200);
+}
+
 void setup() {
+    auto arch = InArchive{};
+    users.load(arch);
+
     pinMode(buttonIn, INPUT);
     pinMode(buttonOut, OUTPUT);
     pinMode(relayPin, OUTPUT);
@@ -43,6 +57,11 @@ void loop() {
     auto id = reader.getId();
 
     auto relayState = state.handle(users, &id, isButtonPressed());
+
+    if (users.isChanged()) {
+        auto arch = OutArchive{};
+        users.save(arch);
+    }
 
     digitalWrite(relayPin, relayState);
 

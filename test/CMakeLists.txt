@@ -21,6 +21,7 @@ add_executable(
     user_test
     user_test.cpp
     state_test.cpp
+    testclasses.cpp
 )
 
 target_link_libraries(

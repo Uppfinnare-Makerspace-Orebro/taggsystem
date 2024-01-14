@@ -39,6 +39,7 @@ bool Users::add(UIDt uid, bool isAdmin) {
     if (auto *user = find(uid)) {
         if (isAdmin && !user->isAdmin()) {
             user->isAdmin(true);
+            _isChanged = true;
             return true;
         }
         return false;
@@ -46,6 +47,7 @@ bool Users::add(UIDt uid, bool isAdmin) {
     for (User &user : users) {
         if (user == BADUSER) {
             user = User{uid, isAdmin};
+            _isChanged = true;
             return true;
         }
     }
@@ -55,6 +57,7 @@ bool Users::add(UIDt uid, bool isAdmin) {
 bool Users::del(UIDt uid) {
     if (auto *user = find(uid)) {
         *user = User{};
+        _isChanged = true;
         return true;
     }
     return false;
@@ -66,4 +69,18 @@ void Users::show() {
             user.show();
         }
     }
+}
+
+void Users::save(OutArchive &arch) {
+    for (auto &user : users) {
+        user.save(arch);
+    }
+    _isChanged = false;
+}
+
+void Users::load(InArchive &arch) {
+    for (auto &user : users) {
+        user.load(arch);
+    }
+    _isChanged = false;
 }

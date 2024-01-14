@@ -1,6 +1,7 @@
 #ifndef USERS_H
 #define USERS_H
 
+#include "archive.h"
 #include "uidt.h"
 #include <stdint.h>
 
@@ -46,11 +47,27 @@ public:
     void isAdmin(bool value) {
         _isAdmin = value;
     }
+
+    void save(OutArchive &arch) {
+        for (auto c : UID.data) {
+            arch.write(c);
+        }
+        arch.write(_isAdmin ? 1 : 0xff);
+    }
+
+    void load(InArchive &arch) {
+        for (auto &c : UID.data) {
+            c = arch.read();
+        }
+        auto adm = arch.read();
+        _isAdmin = adm == 1;
+    }
 };
 
 class Users {
 private:
     User users[N_USERS];
+    bool _isChanged = false;
 
 public:
     User *find(UIDt uid);
@@ -58,7 +75,14 @@ public:
     bool add(UIDt uid, bool isAdmin = false);
     bool del(UIDt uid);
 
+    bool isChanged() const {
+        return _isChanged;
+    }
+
     void show();
+
+    void save(OutArchive &);
+    void load(InArchive &);
 };
 
 #endif // USERS_H

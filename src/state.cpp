@@ -1,4 +1,5 @@
 #include "state.h"
+#include "led.h"
 #include "print.h"
 #include "uidt.h"
 
@@ -58,6 +59,7 @@ bool State::handleStart(Users &users, const UIDt *id, bool isPressed) {
         wait();
         currentId = *id;
         state = AddUser;
+        flash(1);
         return false;
     }
 
@@ -69,6 +71,7 @@ void State::handleAddUser(Users &users, const UIDt *id, bool isPressed) {
     if (!id) {
         if (isPressed) {
             state = AddAdmin;
+            flash(2);
             wait();
         }
         return;
@@ -88,6 +91,7 @@ void State::handleAddAdmin(Users &users, const UIDt *id, bool isPressed) {
     if (!id) {
         if (isPressed) {
             state = RemoveUser;
+            flash(3);
             wait();
         }
         return;
