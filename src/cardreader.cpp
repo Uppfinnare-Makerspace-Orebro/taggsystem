@@ -29,12 +29,11 @@ bool CardReader::tryRead() {
         return false;
     }
 
-    // Dump debug info about the card; PICC_HaltA() is automatically called
-    // mfrc522.PICC_DumpToSerial(&(mfrc522.uid));
-    // Serial.println("User added");
-    // Serial.println(mfrc522.uid.size);
-    // id.data = mfrc522.uid.uidByte;
     memcpy(id.data, mfrc522.uid.uidByte, 10);
 
-    // users.add(User::fromRaw(mfrc522.uid.uidByte));
+    return true;
+}
+
+UIDt CardReader::getId() {
+    return id;
 }

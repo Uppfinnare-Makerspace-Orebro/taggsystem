@@ -25,6 +25,9 @@ TEST(UserTest, MultipleUsers) {
     EXPECT_TRUE(users.find(userData1));
     users.add(userData2);
     EXPECT_TRUE(users.find(userData2));
+
+    users.del(userData2);
+    EXPECT_FALSE(users.find(userData2));
 }
 
 // Main function running all tests

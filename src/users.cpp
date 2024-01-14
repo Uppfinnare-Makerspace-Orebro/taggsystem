@@ -16,19 +16,13 @@ void User::show() {
 #endif
 }
 
-Users::Users() { // This actually already happened in the constructor of Users
-    for (IDXt i = 0; i < N_USERS; ++i) {
-        users[i] = User(BADUSER);
-    }
-}
-
-bool Users::find(UIDt uid) {
+User *Users::find(UIDt uid) {
     for (User &user : users) {
         if (user == User(uid)) {
-            return true;
+            return &user;
         }
     }
-    return false;
+    return nullptr;
 }
 
 bool Users::add(UIDt uid) {
@@ -36,8 +30,8 @@ bool Users::add(UIDt uid) {
         return false;
     }
     for (User &user : users) {
-        if (user == User(BADUSER)) {
-            user = User(uid);
+        if (user == BADUSER) {
+            user = User{uid};
             return true;
         }
     }
@@ -45,18 +39,16 @@ bool Users::add(UIDt uid) {
 }
 
 bool Users::del(UIDt uid) {
-    for (User &user : users) {
-        if (user == User(uid)) {
-            user = User(BADUSER);
-            return true;
-        }
+    if (auto *user = find(uid)) {
+        *user = User{};
+        return true;
     }
     return false;
 }
 
 void Users::show() {
     for (User &user : users) {
-        if (!(user == User(BADUSER))) {
+        if (!(user == BADUSER)) {
             user.show();
         }
     }

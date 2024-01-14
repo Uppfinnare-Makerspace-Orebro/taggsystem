@@ -9,9 +9,11 @@ public:
 
     CardReader(int ss, int rst);
 
+    /// On success, @return true and save the read id, on failure return false
     bool tryRead();
+
     UIDt getId();
 
 private:
-    UIDt id;
+    UIDt id = {};
 };

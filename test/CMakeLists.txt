@@ -20,6 +20,7 @@ include(GoogleTest)
 add_executable(
     user_test
     user_test.cpp
+    state_test.cpp
 )
 
 target_link_libraries(
