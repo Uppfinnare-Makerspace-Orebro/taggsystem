@@ -1,17 +1,9 @@
 #ifndef USERS_H
 #define USERS_H
 
+#include "uidt.h"
 #include <stdint.h>
 
-struct UIDt {
-    uint8_t data[10];
-
-    constexpr bool operator==(const UIDt &other) const {
-        return data == other.data;
-    }
-};
-
-// using UIDt = std::array<uint8_t, 10>;
 constexpr auto BADUSER =
     UIDt{0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF};
 

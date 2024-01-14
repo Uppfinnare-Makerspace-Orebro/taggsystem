@@ -6,7 +6,7 @@
 void User::show() {
 #if __has_include(<Arduino.h>)
     // Print the array in hex format
-    for (auto elem : UID) {
+    for (auto elem : UID.data) {
         Serial.print("0x");
         if (elem < 0x10) {
             Serial.print("0"); // Print leading zero for single digit hex values
@@ -16,31 +16,27 @@ void User::show() {
 #endif
 }
 
-Users::Users(){ //This actually already happened in the constructor of Users
-    for (IDXt i = 0; i < N_USERS; ++i)
-    {
+Users::Users() { // This actually already happened in the constructor of Users
+    for (IDXt i = 0; i < N_USERS; ++i) {
         users[i] = User(BADUSER);
     }
 }
 
-bool Users::find(UIDt uid){
-    for(User &user:users)
-    {
-        if(user == User(uid)){
+bool Users::find(UIDt uid) {
+    for (User &user : users) {
+        if (user == User(uid)) {
             return true;
         }
     }
     return false;
 }
 
-bool Users::add(UIDt uid){
-    if(find(uid))
-    {
-      return false;
+bool Users::add(UIDt uid) {
+    if (find(uid)) {
+        return false;
     }
-    for(User &user:users)
-    {
-        if(user == User(BADUSER)){
+    for (User &user : users) {
+        if (user == User(BADUSER)) {
             user = User(uid);
             return true;
         }
@@ -48,10 +44,9 @@ bool Users::add(UIDt uid){
     return false;
 }
 
-bool Users::del(UIDt uid){
-    for(User &user:users)
-    {
-        if(user == User(uid)){
+bool Users::del(UIDt uid) {
+    for (User &user : users) {
+        if (user == User(uid)) {
             user = User(BADUSER);
             return true;
         }
@@ -59,12 +54,10 @@ bool Users::del(UIDt uid){
     return false;
 }
 
-void Users::show(){
-  for(User &user:users)
-  {
-    if(!(user == User(BADUSER)))
-    {
-      user.show();
+void Users::show() {
+    for (User &user : users) {
+        if (!(user == User(BADUSER))) {
+            user.show();
+        }
     }
-  }
 }

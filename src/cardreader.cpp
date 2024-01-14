@@ -1,8 +1,9 @@
 #include "cardreader.h"
-
 #include "SPI.h"
 #include <Arduino.h>
-#include <MFRC522.h>
+
+CardReader::CardReader(int ss, int rst)
+    : mfrc522(ss, rst) {}
 
 void CardReader::init(int ss_pin, int rst_pin) {
     Serial.begin(9600); // Initialize serial communications with the PC
