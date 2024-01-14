@@ -11,9 +11,15 @@ typedef int IDXt;
 #define N_USERS 50
 #define IDX_BADUSER (N_USERS + 1)
 
+enum class UserType : char {
+    Normal,
+    Admin,
+};
+
 class User {
 private:
     UIDt UID = BADUSER;
+    UserType type = UserType::Normal;
 
 public:
     explicit User(UIDt uid) {
