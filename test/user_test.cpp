@@ -1,3 +1,4 @@
+#include "archive.h"
 #include "users.h"
 #include <gtest/gtest.h>
 
@@ -34,6 +35,26 @@ TEST(UserTest, MultipleUsers) {
 
     users.del(userData2);
     EXPECT_FALSE(users.find(userData2));
+}
+
+TEST(UserTest, Archive) {
+    {
+        auto users = Users{};
+        users.add(userData1);
+        users.add(userData2, true);
+
+        auto arch = OutArchive{};
+        users.save(arch);
+    }
+    {
+        auto users = Users{};
+        auto arch = InArchive{};
+        users.load(arch);
+
+        EXPECT_TRUE(users.find(userData1));
+        EXPECT_FALSE(users.findAdmin(userData1));
+        EXPECT_TRUE(users.findAdmin(userData2));
+    }
 }
 
 // Main function running all tests
