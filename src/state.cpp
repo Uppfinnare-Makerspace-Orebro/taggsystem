@@ -23,11 +23,13 @@ bool State::handle(Users &users, const UIDt *id, bool isPressed) {
         return handleStart(users, id, isPressed);
         break;
     case AddUser:
-
+        handleAddUser(users, id, isPressed);
         break;
     case AddAdmin:
+        handleAddAdmin(users, id, isPressed);
         break;
     case RemoveUser:
+        handleRemoveUser(users, id, isPressed);
         break;
     }
 
@@ -40,10 +42,16 @@ bool State::handleStart(Users &users, const UIDt *id, bool isPressed) {
     }
 
     if (!users.find(*id)) {
-        Serial.print("User ");
+        // Serial.print("User ");
         // Serial.print(id);
-        Serial.println("not found");
+        // Serial.println("not found");
         return false;
+    }
+
+    // Only admins can access the menu
+    if (!users.findAdmin(*id)) {
+        wait();
+        return true;
     }
 
     if (isPressed) {
@@ -58,37 +66,58 @@ bool State::handleStart(Users &users, const UIDt *id, bool isPressed) {
 }
 
 void State::handleAddUser(Users &users, const UIDt *id, bool isPressed) {
-    if (id) {
-        /// The first user has probably not removed their tag
-        if (*id == currentId) {
-            return;
+    if (!id) {
+        if (isPressed) {
+            state = AddAdmin;
+            wait();
         }
-
-        users.add(*id);
-        reset();
-        wait();
+        return;
     }
 
-    if (isPressed) {
-        state = AddAdmin;
-        wait();
+    /// The first user has probably not removed their tag
+    if (*id == currentId) {
+        return;
     }
+
+    users.add(*id);
+    reset();
+    wait();
 }
 
 void State::handleAddAdmin(Users &users, const UIDt *id, bool isPressed) {
-    if (id) {
-        /// The first user has probably not removed their tag
-        if (*id == currentId) {
-            return;
+    if (!id) {
+        if (isPressed) {
+            state = RemoveUser;
+            wait();
         }
-
-        users.add(*id);
-        reset();
-        wait();
+        return;
+    }
+    /// The first user has probably not removed their tag
+    if (*id == currentId) {
+        return;
     }
 
-    if (isPressed) {
-        state = RemoveUser;
-        wait();
+    users.add(*id, true);
+    reset();
+    wait();
+}
+
+void State::handleRemoveUser(Users &users, const UIDt *id, bool isPressed) {
+    if (!id) {
+        if (isPressed) {
+            reset();
+            wait();
+        }
+        return;
     }
+
+    /// Removing yourself is not allowed (since it could lead to no admin being
+    /// active)
+    if (*id == currentId) {
+        return;
+    }
+
+    users.del(*id);
+    reset();
+    wait();
 }

@@ -30,4 +30,6 @@ private:
     void handleAddUser(Users &users, const UIDt *id, bool isPressed);
 
     void handleAddAdmin(Users &users, const UIDt *id, bool isPressed);
+
+    void handleRemoveUser(Users &users, const UIDt *id, bool isPressed);
 };

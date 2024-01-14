@@ -14,6 +14,12 @@ TEST(UserTest, SingleUser) {
     users.add(userData1);
 
     EXPECT_TRUE(users.find(userData1));
+
+    EXPECT_FALSE(users.findAdmin(userData1));
+
+    users.add(userData1, true);
+
+    EXPECT_TRUE(users.findAdmin(userData1));
 }
 
 TEST(UserTest, MultipleUsers) {

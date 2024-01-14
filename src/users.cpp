@@ -18,20 +18,34 @@ void User::show() {
 
 User *Users::find(UIDt uid) {
     for (User &user : users) {
-        if (user == User(uid)) {
+        if (user == uid) {
             return &user;
         }
     }
     return nullptr;
 }
 
-bool Users::add(UIDt uid) {
-    if (find(uid)) {
+User *Users::findAdmin(UIDt uid) {
+    if (auto *user = find(uid)) {
+        if (user->isAdmin()) {
+            return user;
+        }
+    }
+
+    return nullptr;
+}
+
+bool Users::add(UIDt uid, bool isAdmin) {
+    if (auto *user = find(uid)) {
+        if (isAdmin && !user->isAdmin()) {
+            user->isAdmin(true);
+            return true;
+        }
         return false;
     }
     for (User &user : users) {
         if (user == BADUSER) {
-            user = User{uid};
+            user = User{uid, isAdmin};
             return true;
         }
     }

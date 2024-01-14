@@ -11,19 +11,15 @@ typedef int IDXt;
 #define N_USERS 50
 #define IDX_BADUSER (N_USERS + 1)
 
-enum class UserType : uint8_t {
-    Normal = 0xFF,
-    Admin = 0x1,
-};
-
 class User {
 private:
     UIDt UID = BADUSER;
-    UserType type = UserType::Normal;
+    bool _isAdmin = false;
 
 public:
-    explicit User(UIDt uid)
-        : UID{uid} {}
+    explicit User(UIDt uid, bool isAdmin)
+        : UID{uid}
+        , _isAdmin{isAdmin} {}
     User() = default;
     bool operator==(const User &other) {
         return other.UID == UID;
@@ -42,6 +38,14 @@ public:
         }
         return id;
     }
+
+    bool isAdmin() const {
+        return _isAdmin;
+    }
+
+    void isAdmin(bool value) {
+        _isAdmin = value;
+    }
 };
 
 class Users {
@@ -50,8 +54,10 @@ private:
 
 public:
     User *find(UIDt uid);
-    bool add(UIDt uid);
+    User *findAdmin(UIDt uid);
+    bool add(UIDt uid, bool isAdmin = false);
     bool del(UIDt uid);
+
     void show();
 };
 
