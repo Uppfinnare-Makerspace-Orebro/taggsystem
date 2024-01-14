@@ -6,6 +6,11 @@ struct UIDt {
     uint8_t data[10];
 
     constexpr bool operator==(const UIDt &other) const {
-        return data == other.data;
+        for (int i = 0; i < 10; ++i) {
+            if (data[i] != other.data[i]) {
+                return false;
+            }
+        }
+        return true;
     }
 };
