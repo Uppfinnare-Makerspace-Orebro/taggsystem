@@ -12,7 +12,9 @@ public:
     /// On success, @return true and save the read id, on failure return false
     bool tryRead();
 
-    UIDt getId();
+    UIDt getId() {
+        return id;
+    }
 
 private:
     UIDt id = {};

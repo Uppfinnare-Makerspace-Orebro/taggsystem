@@ -1,8 +1,9 @@
-#include "Arduino.h"
 #include "archive.h"
 #include "cardreader.h"
+#include "led.h"
 #include "state.h"
 #include "users.h"
+#include <Arduino.h>
 
 #include <MFRC522.h>
 #include <SPI.h>
@@ -10,28 +11,22 @@
 constexpr auto RST_PIN = 9; // Configurable, see typical pin layout
 constexpr auto SS_PIN = 10; // Configurable, see typical pin layout
 
-constexpr auto buttonIn = 3;
+constexpr auto buttonIn = 7;
 constexpr auto buttonOut = 3;
 constexpr auto relayPin = 2;
-constexpr auto ledPin = 6;
+
+namespace {
 
 Users users;
 CardReader reader(SS_PIN, RST_PIN);
+constexpr auto ledPin = 6;
 
 State state;
 
+} // namespace
+
 bool isButtonPressed() {
     return digitalRead(buttonIn);
-}
-
-void flash(int num, int delayMs) {
-    for (int i = 0; i < num; ++i) {
-        digitalWrite(ledPin, 1);
-        delay(delayMs);
-        digitalWrite(ledPin, 0);
-        delay(delayMs);
-    }
-    delay(delayMs);
 }
 
 void setup() {
@@ -41,7 +36,7 @@ void setup() {
     pinMode(buttonIn, INPUT);
     pinMode(buttonOut, OUTPUT);
     pinMode(relayPin, OUTPUT);
-    pinMode(ledPin, OUTPUT);
+    initLed(ledPin);
 
     digitalWrite(buttonOut, 1);
     digitalWrite(ledPin, 0);
@@ -49,6 +44,8 @@ void setup() {
 }
 
 void loop() {
+    Serial.println("loop()");
+    digitalWrite(relayPin, 0);
     if (!reader.tryRead()) {
         state.handle(users, nullptr, isButtonPressed());
         return;
@@ -66,6 +63,7 @@ void loop() {
     digitalWrite(relayPin, relayState);
 
     if (relayState) {
+        Serial.println("relay active");
         delay(1000);
     }
 }

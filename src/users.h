@@ -89,6 +89,7 @@ public:
     void load(InArchive &);
 
     bool isEmpty() const;
+    int count() const;
 };
 
 #endif // USERS_H

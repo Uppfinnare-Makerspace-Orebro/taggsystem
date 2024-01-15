@@ -67,9 +67,29 @@
       if (pin == 7) {
           return +document.getElementById("button").checked;
       }
-      
-      return +document.querySelector('input[name="list"]:checked').id; 
+
+      return 0;
   }
-  </script>
+
+  function getCard() {
+      return +document.querySelector('input[name="list"]:checked').id;
+  }
+
+  function flashLed(num, delay) {
+    const ledElement = document.getElementById('led');
+    if (!ledElement) return; // Exit if the element doesn't exist
+
+    for (let i = 0; i < num * 2; i++) {
+      setTimeout(() => {
+        if (i % 2 === 0) {
+          ledElement.classList.add('active');
+        } else {
+          ledElement.classList.remove('active');
+        }
+      }, delay * i);
+    }
+  }
+
+  </script> {{{ SCRIPT }}}
 </body>
 </html>

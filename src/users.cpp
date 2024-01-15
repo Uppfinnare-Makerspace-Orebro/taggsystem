@@ -94,3 +94,14 @@ bool Users::isEmpty() const {
 
     return true;
 }
+
+int Users::count() const {
+    int count = 0;
+    for (auto &user : users) {
+        if (user != BADUSER) {
+            ++count;
+        }
+    }
+
+    return count;
+}

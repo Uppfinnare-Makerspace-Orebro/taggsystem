@@ -67,7 +67,7 @@ TEST(UserTest, Archive) {
     }
 }
 
-TEST(UserTest, ISEmpty) {
+TEST(UserTest, IsEmpty) {
     auto users = Users{};
 
     EXPECT_TRUE(users.isEmpty());
@@ -75,6 +75,24 @@ TEST(UserTest, ISEmpty) {
     users.add(userData1);
 
     EXPECT_FALSE(users.isEmpty());
+}
+
+TEST(UserTest, Count) {
+    auto users = Users{};
+
+    EXPECT_EQ(users.count(), 0);
+
+    users.add(userData1);
+
+    EXPECT_EQ(users.count(), 1);
+
+    users.add(userData1); // Same user
+
+    EXPECT_EQ(users.count(), 1);
+
+    users.add(userData2); // Same user
+
+    EXPECT_EQ(users.count(), 2);
 }
 
 // Main function running all tests

@@ -34,6 +34,4 @@ bool CardReader::tryRead() {
     return true;
 }
 
-UIDt CardReader::getId() {
-    return id;
-}
+

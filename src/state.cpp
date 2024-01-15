@@ -13,14 +13,16 @@ void State::reset() {
 }
 
 bool State::handle(Users &users, const UIDt *id, bool isPressed) {
-
     if (isWaitingForButtonRelease && (isPressed || id)) {
         return false;
     }
 
     isWaitingForButtonRelease = false;
 
+    Serial.println("num users:");
+    Serial.println(users.count());
     if (users.isEmpty()) {
+        Serial.println("no users");
         state = NoUsers;
     }
 
@@ -29,12 +31,15 @@ bool State::handle(Users &users, const UIDt *id, bool isPressed) {
         return handleStart(users, id, isPressed);
         break;
     case AddUser:
+        flash(1);
         handleAddUser(users, id, isPressed);
         break;
     case AddAdmin:
+        flash(2);
         handleAddAdmin(users, id, isPressed);
         break;
     case RemoveUser:
+        flash(3);
         handleRemoveUser(users, id, isPressed);
         break;
 
@@ -47,6 +52,11 @@ bool State::handle(Users &users, const UIDt *id, bool isPressed) {
 }
 
 bool State::handleStart(Users &users, const UIDt *id, bool isPressed) {
+    Serial.println("start()");
+    Serial.println("hasId?");
+    Serial.println(!!id);
+    Serial.println("pressed:");
+    Serial.println(isPressed);
     if (!id) {
         return false;
     }
@@ -68,7 +78,6 @@ bool State::handleStart(Users &users, const UIDt *id, bool isPressed) {
         wait();
         currentId = *id;
         state = AddUser;
-        flash(1);
         return false;
     }
 
@@ -80,7 +89,6 @@ void State::handleAddUser(Users &users, const UIDt *id, bool isPressed) {
     if (!id) {
         if (isPressed) {
             state = AddAdmin;
-            flash(2);
             wait();
         }
         return;
@@ -91,6 +99,7 @@ void State::handleAddUser(Users &users, const UIDt *id, bool isPressed) {
         return;
     }
 
+    Serial.println("Added user");
     users.add(*id);
     reset();
     wait();
@@ -100,7 +109,6 @@ void State::handleAddAdmin(Users &users, const UIDt *id, bool isPressed) {
     if (!id) {
         if (isPressed) {
             state = RemoveUser;
-            flash(3);
             wait();
         }
         return;
@@ -110,6 +118,7 @@ void State::handleAddAdmin(Users &users, const UIDt *id, bool isPressed) {
         return;
     }
 
+    Serial.println("Added admin");
     users.add(*id, true);
     reset();
     wait();
@@ -130,6 +139,7 @@ void State::handleRemoveUser(Users &users, const UIDt *id, bool isPressed) {
         return;
     }
 
+    Serial.println("Deleted user");
     users.del(*id);
     reset();
     wait();
@@ -141,6 +151,7 @@ void State::handleNoUser(Users &users, const UIDt *id, bool isPressed) {
         return;
     }
 
+    Serial.println("Add first root user");
     users.add(*id, true);
 
     flash(10);
