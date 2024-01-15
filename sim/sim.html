@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Tag simulator</title>
+  <style>
+     .box {
+         border: 1px solid black;
+         width: 100px;
+         height: 100px;
+         background: gray;
+     }
+     
+     .led {
+         border: 1px solid black;
+         width: 10px;
+         height: 10px;
+         background: black;
+     }
+     div.active {
+         background: red;
+     }
+
+  </style>
+</head>
+<body>
+  <div>
+    <input type="radio" id="0" name="list" value="Item 1" checked=
+    "true"> <label for="0">No card</label>
+  </div>
+  <div>
+    <input type="radio" id="1" name="list" value="Item 1">
+    <label for="1">Card 1</label>
+  </div>
+  <div>
+    <input type="radio" id="2" name="list" value="Item 2">
+    <label for="2">Card 2</label>
+  </div>
+  <div>
+    <input type="radio" id="3" name="list" value="Item 3">
+    <label for="3">Card 3</label>
+  </div>
+  <div>
+    <input type="checkbox" id="button" name="button" value=
+    "Button"><label for="button">Button</label>
+  </div>
+  <div class="box">
+    led
+    <div id="led" class="led active"></div>relay
+    <div id="relay" class="led"></div>
+  </div>
+  <script>
+  function digitalWrite(pin, value) {
+      let element = document.getElementById("led");
+      if (pin == 2) {
+          element = document.getElementById("relay");
+      }
+      
+      if (value) {
+          element.classList.add("active");
+      }
+      else {
+          element.classList.remove("active");
+      }
+  }
+
+  function digitalRead(pin) {
+      if (pin == 7) {
+          return +document.getElementById("button").checked;
+      }
+      
+      return +document.querySelector('input[name="list"]:checked').id; 
+  }
+  </script>
+</body>
+</html>
