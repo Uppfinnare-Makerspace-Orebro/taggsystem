@@ -18,3 +18,5 @@ relay pin 2
 1 - Admin state - Add user, button triggers next state, tag adds user
 2 - Admin state - Add admin, button triggers next state, tag adds admin
 3 - Admin state - Remove admin, button triggers next resets to next state, tag deletes user
+
+4 - Trigger if no user is set, then the first user showing its card will be admin

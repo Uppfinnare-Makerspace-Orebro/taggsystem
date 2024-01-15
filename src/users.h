@@ -22,12 +22,16 @@ public:
         : UID{uid}
         , _isAdmin{isAdmin} {}
     User() = default;
-    bool operator==(const User &other) {
+    bool operator==(const User &other) const {
         return other.UID == UID;
     }
-    bool operator==(const UIDt &id) {
+    bool operator==(const UIDt &id) const {
         return UID == id;
     }
+    bool operator!=(const UIDt &id) const {
+        return UID != id;
+    }
+
     void show();
     UIDt getUID() {
         return UID;
@@ -83,6 +87,8 @@ public:
 
     void save(OutArchive &);
     void load(InArchive &);
+
+    bool isEmpty() const;
 };
 
 #endif // USERS_H

@@ -13,11 +13,16 @@ void State::reset() {
 }
 
 bool State::handle(Users &users, const UIDt *id, bool isPressed) {
+
     if (isWaitingForButtonRelease && (isPressed || id)) {
         return false;
     }
 
     isWaitingForButtonRelease = false;
+
+    if (users.isEmpty()) {
+        state = NoUsers;
+    }
 
     switch (state) {
     case Start:
@@ -31,6 +36,10 @@ bool State::handle(Users &users, const UIDt *id, bool isPressed) {
         break;
     case RemoveUser:
         handleRemoveUser(users, id, isPressed);
+        break;
+
+    case NoUsers:
+        handleNoUser(users, id, isPressed);
         break;
     }
 
@@ -122,6 +131,19 @@ void State::handleRemoveUser(Users &users, const UIDt *id, bool isPressed) {
     }
 
     users.del(*id);
+    reset();
+    wait();
+}
+
+void State::handleNoUser(Users &users, const UIDt *id, bool isPressed) {
+    if (!id) {
+        flash(3, 200);
+        return;
+    }
+
+    users.add(*id, true);
+
+    flash(10);
     reset();
     wait();
 }

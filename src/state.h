@@ -9,6 +9,8 @@ struct State {
         AddUser,
         AddAdmin,
         RemoveUser,
+
+        NoUsers,
     };
 
     StateNum state = Start;
@@ -26,10 +28,10 @@ private:
     /// This is the only mode that can turn of the relay hence the only function
     /// that returns true
     bool handleStart(Users &users, const UIDt *id, bool isPressed);
-
     void handleAddUser(Users &users, const UIDt *id, bool isPressed);
-
     void handleAddAdmin(Users &users, const UIDt *id, bool isPressed);
-
     void handleRemoveUser(Users &users, const UIDt *id, bool isPressed);
+
+    /// If no user is set, the first user showing it's id will be admin
+    void handleNoUser(Users &users, const UIDt *id, bool isPressed);
 };

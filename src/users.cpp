@@ -84,3 +84,13 @@ void Users::load(InArchive &arch) {
     }
     _isChanged = false;
 }
+
+bool Users::isEmpty() const {
+    for (auto &user : users) {
+        if (user != BADUSER) {
+            return false;
+        }
+    }
+
+    return true;
+}

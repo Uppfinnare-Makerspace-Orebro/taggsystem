@@ -13,4 +13,8 @@ struct UIDt {
         }
         return true;
     }
+
+    constexpr bool operator!=(const UIDt &other) const {
+        return !(*this == other);
+    }
 };

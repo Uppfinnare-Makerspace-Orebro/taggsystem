@@ -24,14 +24,14 @@ bool isButtonPressed() {
     return digitalRead(buttonIn);
 }
 
-void flash(int num) {
+void flash(int num, int delayMs) {
     for (int i = 0; i < num; ++i) {
         digitalWrite(ledPin, 1);
-        delay(100);
+        delay(delayMs);
         digitalWrite(ledPin, 0);
-        delay(100);
+        delay(delayMs);
     }
-    delay(200);
+    delay(delayMs);
 }
 
 void setup() {

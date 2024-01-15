@@ -17,4 +17,4 @@ uint8_t InArchive::read() {
     return eepromData.at(address++);
 }
 
-void flash(int num) {}
+void flash(int num, int delayMs) {}

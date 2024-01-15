@@ -96,3 +96,13 @@ TEST(StateTest, PreventFromRemoveOneSelf) {
 
     EXPECT_TRUE(users.find(userData2));
 }
+
+TEST(StateTest, MakeFirstUserAdmin) {
+    auto users = Users{};
+    auto state = State{};
+
+    EXPECT_FALSE(repeatMessage(state, users, &userData1, true));
+
+    EXPECT_TRUE(users.find(userData1));
+    EXPECT_TRUE(users.findAdmin(userData1));
+}
