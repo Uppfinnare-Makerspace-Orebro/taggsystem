@@ -41,6 +41,8 @@ void setup() {
     digitalWrite(buttonOut, 1);
     digitalWrite(ledPin, 0);
     digitalWrite(relayPin, 0);
+
+    reader.init();
 }
 
 void loop() {

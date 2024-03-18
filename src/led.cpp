@@ -18,6 +18,6 @@ void flash(int num, int delayMs) {
 }
 
 void initLed(int pin) {
-    pinMode(ledPin, OUTPUT);
     ledPin = pin;
+    pinMode(ledPin, OUTPUT);
 }
