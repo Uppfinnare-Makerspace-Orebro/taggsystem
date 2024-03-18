@@ -20,3 +20,44 @@ relay pin 2
 3 - Admin state - Remove admin, button triggers next resets to next state, tag deletes user
 
 4 - Trigger if no user is set, then the first user showing its card will be admin
+
+# Build arduino
+
+Install platformio. Make sure that the command `platformio` or `pio` is available.
+if one does not exist try the other.
+
+run
+
+`platformio run -t build` to find compilation errors
+
+run 
+
+`platformio run -t upload` to build and upload the program to the arduino
+
+# Build test project (ubuntu linux pc tests, without a physical device)
+
+Install cmake, build-essensial etc.
+
+create build directory and build
+
+```bash
+mkdir build
+cd build
+cmake ../.. -DCMAKE_BUILD_TYPE=Debug
+make -j
+``` 
+
+Run tests:
+
+In the build directory
+
+```bash
+ctest .
+```
+
+# Build emscripten (web simulator)
+
+Install emscripten
+
+run like the simulator above but replace `cmake` with `emcmake cmake`...
+and `make` with `emmake make`
