@@ -7,9 +7,9 @@ class CardReader {
 public:
     MFRC522 mfrc522; // Create MFRC522 instance
 
-    CardReader();
+    CardReader(int ss, int rst);
 
-    void init(int ss, int rst);
+    void init();
 
     /// On success, @return true and save the read id, on failure return false
     bool tryRead();
