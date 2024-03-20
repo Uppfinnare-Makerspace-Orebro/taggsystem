@@ -34,6 +34,12 @@ run
 
 `platformio run -t upload` to build and upload the program to the arduino
 
+
+Build and run nodemcu
+```bash
+platformio run -e nodemcu --target upload
+```
+
 # Build test project (ubuntu linux pc tests, without a physical device)
 
 Install cmake, build-essensial etc.
