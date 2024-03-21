@@ -10,20 +10,22 @@
 
 namespace {
 
-#if 0 // Old config for nodemcu
+#if 1 // Old config for nodemcu
+
 constexpr auto RST_PIN = D2; // Configurable, see typical pin layout
 constexpr auto SS_PIN = D8;  // Configurable, see typical pin layout
 
 constexpr auto buttonIn = D1; // 7;
 constexpr auto relayPin = D0;
 constexpr auto ledPin = D4;
-#endif
+#else
 constexpr auto RST_PIN = 9; // Configurable, see typical pin layout
 constexpr auto SS_PIN = 10; // Configurable, see typical pin layout
 
 constexpr auto buttonIn = 7; // 7;
 constexpr auto relayPin = 2;
 constexpr auto ledPin = 4;
+#endif
 
 Users users;
 CardReader reader(SS_PIN, RST_PIN);
