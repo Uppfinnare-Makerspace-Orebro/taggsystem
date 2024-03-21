@@ -14,5 +14,5 @@ jobs:
     - name: Install PlatformIO
       run: pip install platformio
     - name: Run PlatformIO
-      run: platformio run -e nodemcu
+      run: platformio run -e esp32
 
