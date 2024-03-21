@@ -8,18 +8,18 @@
 #include <MFRC522.h>
 #include <SPI.h>
 
-constexpr auto RST_PIN = 9; // Configurable, see typical pin layout
-constexpr auto SS_PIN = 10; // Configurable, see typical pin layout
-
-constexpr auto buttonIn = 7;
-constexpr auto buttonOut = 3;
-constexpr auto relayPin = 2;
-
 namespace {
+
+constexpr auto RST_PIN = D2; // Configurable, see typical pin layout
+constexpr auto SS_PIN = D8;  // Configurable, see typical pin layout
+
+constexpr auto buttonIn = D1; // 7;
+// constexpr auto buttonOut = 3;
+constexpr auto relayPin = D0;
+constexpr auto ledPin = D4;
 
 Users users;
 CardReader reader(SS_PIN, RST_PIN);
-constexpr auto ledPin = 6;
 
 State state;
 
@@ -33,12 +33,12 @@ void setup() {
     auto arch = InArchive{};
     users.load(arch);
 
-    pinMode(buttonIn, INPUT);
-    pinMode(buttonOut, OUTPUT);
+    pinMode(buttonIn, INPUT_PULLUP);
+    // pinMode(buttonOut, OUTPUT);
     pinMode(relayPin, OUTPUT);
     initLed(ledPin);
 
-    digitalWrite(buttonOut, 1);
+    // digitalWrite(buttonOut, 1);
     digitalWrite(ledPin, 0);
     digitalWrite(relayPin, 0);
 
