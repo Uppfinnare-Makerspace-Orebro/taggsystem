@@ -5,8 +5,7 @@
 #include "uidt.h"
 #include <stdint.h>
 
-constexpr auto BADUSER =
-    UIDt{0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF};
+const auto BADUSER = UIDt{};
 
 typedef int IDXt;
 #define N_USERS 50

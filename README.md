@@ -26,13 +26,19 @@ relay pin 2
 Install platformio. Make sure that the command `platformio` or `pio` is available.
 if one does not exist try the other.
 
+If you want to install arduino for the commandline on ubuntu use the command
+
+```
+pip3 install platformio
+```
+
 run
 
-`platformio run -t build` to find compilation errors
+`platformio run -e esp32` to find compilation errors
 
 run 
 
-`platformio run -t upload` to build and upload the program to the arduino
+`platformio run -e esp32 -t upload` to build and upload the program to the arduino
 
 
 Build and run nodemcu
@@ -40,7 +46,7 @@ Build and run nodemcu
 platformio run -e nodemcu --target upload
 ```
 
-# Build test project (ubuntu linux pc tests, without a physical device)
+## Advanced: Build test project (ubuntu linux pc tests, without a physical device)
 
 Install cmake, build-essensial etc.
 
@@ -61,9 +67,25 @@ In the build directory
 ctest .
 ```
 
-# Build emscripten (web simulator)
+## Advanced: Build emscripten (web simulator)
 
 Install emscripten
 
 run like the simulator above but replace `cmake` with `emcmake cmake`...
 and `make` with `emmake make`
+
+
+## Wierd build errors
+
+If you get wierd build errors, try to remove the currently downloaded packades
+and cache like so
+
+```bash
+rm -R -f ~/.platformio/.cache/ ~/.platformio/packages/
+```
+
+or for windows, remove the corresponding folders
+
+```
+ C:\Users\<user>\.platformio\packages + C:\Users\<user>\.platformio\platforms (+.cache)
+```
