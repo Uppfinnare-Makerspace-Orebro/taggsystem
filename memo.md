@@ -24,3 +24,18 @@ sudo apt install python3-venv
 ```
 
 
+
+## Wierd build errors
+
+If you get wierd build errors, try to remove the currently downloaded packades
+and cache like so
+
+```bash
+rm -R -f ~/.platformio/.cache/ ~/.platformio/packages/
+```
+
+or for windows, remove the corresponding folders
+
+```
+ C:\Users\<user>\.platformio\packages + C:\Users\<user>\.platformio\platforms (+.cache)
+```
