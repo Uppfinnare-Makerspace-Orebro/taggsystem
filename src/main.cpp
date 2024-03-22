@@ -39,12 +39,11 @@ bool isButtonPressed() {
 }
 
 void setup() {
+    initEeprom();
     pinMode(buttonIn, INPUT_PULLUP);
-    // pinMode(buttonOut, OUTPUT);
     pinMode(relayPin, OUTPUT);
     initLed(ledPin);
 
-    // digitalWrite(buttonOut, 1);
     digitalWrite(ledPin, 0);
     digitalWrite(relayPin, 0);
 
