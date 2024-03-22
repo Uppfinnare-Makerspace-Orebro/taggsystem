@@ -1,4 +1,5 @@
 #include "state.h"
+#include "testclasses.h"
 #include "uidt.h"
 #include <gtest/gtest.h>
 
@@ -23,6 +24,7 @@ bool repeatMessage(State &state, Users &users, const UIDt *id, bool isPressed) {
 } // namespace
 
 TEST(StateTest, OpenRelay) {
+    resetEeprom();
     auto users = Users{};
     auto state = State{};
 
@@ -33,6 +35,7 @@ TEST(StateTest, OpenRelay) {
 }
 
 TEST(StateTest, AddUser) {
+    resetEeprom();
     auto users = Users{};
     auto state = State{};
 
@@ -46,6 +49,7 @@ TEST(StateTest, AddUser) {
 }
 
 TEST(StateTest, AddAdmin) {
+    resetEeprom();
     auto users = Users{};
     auto state = State{};
 
@@ -62,6 +66,7 @@ TEST(StateTest, AddAdmin) {
 }
 
 TEST(StateTest, RemoveUser) {
+    resetEeprom();
     auto users = Users{};
     auto state = State{};
 
@@ -80,6 +85,7 @@ TEST(StateTest, RemoveUser) {
 }
 
 TEST(StateTest, PreventFromRemoveOneSelf) {
+    resetEeprom();
     auto users = Users{};
     auto state = State{};
 
@@ -98,6 +104,7 @@ TEST(StateTest, PreventFromRemoveOneSelf) {
 }
 
 TEST(StateTest, MakeFirstUserAdmin) {
+    resetEeprom();
     auto users = Users{};
     auto state = State{};
 

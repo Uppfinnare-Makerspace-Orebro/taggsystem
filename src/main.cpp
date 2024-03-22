@@ -27,10 +27,10 @@ constexpr auto relayPin = 2;
 constexpr auto ledPin = 4;
 #endif
 
-Users users;
-CardReader reader(SS_PIN, RST_PIN);
+auto users = Users{};
+auto reader = CardReader{SS_PIN, RST_PIN};
 
-State state;
+auto state = State{};
 
 } // namespace
 
@@ -39,9 +39,6 @@ bool isButtonPressed() {
 }
 
 void setup() {
-    auto arch = InArchive{};
-    users.load(arch);
-
     pinMode(buttonIn, INPUT_PULLUP);
     // pinMode(buttonOut, OUTPUT);
     pinMode(relayPin, OUTPUT);
@@ -65,11 +62,6 @@ void loop() {
     auto id = reader.getId();
 
     auto relayState = state.handle(users, &id, isButtonPressed());
-
-    if (users.isChanged()) {
-        auto arch = OutArchive{};
-        users.save(arch);
-    }
 
     digitalWrite(relayPin, relayState);
 
