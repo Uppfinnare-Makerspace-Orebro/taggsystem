@@ -17,4 +17,16 @@ public:
     void reset() {
         isSet = false;
     }
+
+    operator bool() const {
+        return isSet;
+    }
+
+    const T &operator*() const {
+        return value;
+    }
+
+    T *operator->() const {
+        return &value;
+    }
 };

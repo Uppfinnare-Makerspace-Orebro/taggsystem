@@ -13,6 +13,7 @@ void State::reset() {
 }
 
 bool State::handle(Users &users, const UIDt *id, bool isPressed) {
+    /// If the button was pressed, we need to wait for it to be released
     if (isWaitingForButtonRelease && (isPressed || id)) {
         return false;
     }

@@ -27,9 +27,9 @@ constexpr auto relayPin = 2;
 constexpr auto ledPin = 4;
 #endif
 
-auto users = Users{};
 auto reader = CardReader{SS_PIN, RST_PIN};
 
+auto users = Users{};
 auto state = State{};
 
 } // namespace
@@ -53,19 +53,20 @@ void setup() {
 void loop() {
     Serial.println("loop()");
     digitalWrite(relayPin, 0);
-    if (!reader.tryRead()) {
+
+    auto card = reader.read();
+
+    if (card) {
         state.handle(users, nullptr, isButtonPressed());
         return;
     }
 
-    auto id = reader.getId();
-
-    auto relayState = state.handle(users, &id, isButtonPressed());
+    bool relayState = state.handle(users, &*card, isButtonPressed());
 
     digitalWrite(relayPin, relayState);
 
     if (relayState) {
-        Serial.println("relay active");
+        // Serial.println("relay active");
         delay(1000);
     }
 }
