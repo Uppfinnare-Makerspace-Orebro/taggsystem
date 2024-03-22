@@ -1,5 +1,6 @@
 #pragma once
 
+#include "basicoptional.h"
 #include "uidt.h"
 #include <MFRC522.h>
 
@@ -11,13 +12,5 @@ public:
 
     void init();
 
-    /// On success, @return true and save the read id, on failure return false
-    bool tryRead();
-
-    UIDt getId() {
-        return id;
-    }
-
-private:
-    UIDt id = {};
+    BasicOptional<UIDt> read();
 };

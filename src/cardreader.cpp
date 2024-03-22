@@ -19,19 +19,21 @@ void CardReader::init() {
     Serial.println(F("Scan PICC to see UID, SAK, type, and data blocks..."));
 }
 
-bool CardReader::tryRead() {
+BasicOptional<UIDt> CardReader::read() {
     // Reset the loop if no new card present on the sensor/reader. This saves
     // the entire process when idle.
     if (!mfrc522.PICC_IsNewCardPresent()) {
-        return false;
+        return {};
     }
 
     // Select one of the cards
     if (!mfrc522.PICC_ReadCardSerial()) {
-        return false;
+        return {};
     }
+
+    auto id = UIDt{};
 
     memcpy(id.data, mfrc522.uid.uidByte, 10);
 
-    return true;
+    return id;
 }

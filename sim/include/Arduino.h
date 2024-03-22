@@ -30,16 +30,16 @@ inline CardReader::CardReader(int ss, int rst) {
     // ignore
 }
 
-inline bool CardReader::tryRead() {
+inline BasicOptional<UIDt> CardReader::read() {
     auto card = EM_ASM_INT({ return getCard(); });
     if (card == 0) {
-        return false;
+        return {};
     }
 
-    id = {};
+    auto id = UIDt{};
     id.data[0] = card;
 
-    return true;
+    return id;
 }
 
 void setup();

@@ -7,10 +7,8 @@
 #include <stdint.h>
 
 constexpr auto BADUSER = UIDt{};
-
-typedef int IDXt;
-#define N_USERS 50
-#define IDX_BADUSER (N_USERS + 1)
+constexpr auto N_USERS = size_t{50};
+constexpr auto IDX_BADUSER = size_t{N_USERS + 1};
 
 class User {
 private:
@@ -79,7 +77,7 @@ public:
 };
 
 struct UserRef {
-    static constexpr size_t npos = static_cast<size_t>(-1);
+    static constexpr auto npos = static_cast<size_t>(-1);
 
     size_t index = npos;
 
@@ -114,7 +112,6 @@ struct UserRef {
 
 class Users {
 public:
-    struct UserIterator;
     UserRef find(UIDt uid);
     UserRef findAdmin(UIDt uid);
 
