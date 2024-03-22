@@ -19,10 +19,10 @@ bool State::handle(Users &users, const UIDt *id, bool isPressed) {
 
     isWaitingForButtonRelease = false;
 
-    Serial.println("num users:");
-    Serial.println(users.count());
+    // Serial.println("num users:");
+    // Serial.println(users.count());
     if (users.isEmpty()) {
-        Serial.println("no users");
+        // Serial.println("no users");
         state = NoUsers;
     }
 
@@ -52,11 +52,11 @@ bool State::handle(Users &users, const UIDt *id, bool isPressed) {
 }
 
 bool State::handleStart(Users &users, const UIDt *id, bool isPressed) {
-    Serial.println("start()");
-    Serial.println("hasId?");
-    Serial.println(!!id);
-    Serial.println("pressed:");
-    Serial.println(isPressed);
+    // Serial.println("start()");
+    // Serial.println("hasId?");
+    // Serial.println(!!id);
+    // Serial.println("pressed:");
+    // Serial.println(isPressed);
     if (!id) {
         return false;
     }
@@ -99,7 +99,7 @@ void State::handleAddUser(Users &users, const UIDt *id, bool isPressed) {
         return;
     }
 
-    Serial.println("Added user");
+    // Serial.println("Added user");
     users.add(*id);
     reset();
     wait();
@@ -118,7 +118,7 @@ void State::handleAddAdmin(Users &users, const UIDt *id, bool isPressed) {
         return;
     }
 
-    Serial.println("Added admin");
+    // Serial.println("Added admin");
     users.add(*id, true);
     reset();
     wait();
@@ -139,7 +139,7 @@ void State::handleRemoveUser(Users &users, const UIDt *id, bool isPressed) {
         return;
     }
 
-    Serial.println("Deleted user");
+    // Serial.println("Deleted user");
     users.del(*id);
     reset();
     wait();
@@ -151,7 +151,7 @@ void State::handleNoUser(Users &users, const UIDt *id, bool isPressed) {
         return;
     }
 
-    Serial.println("Add first root user");
+    // Serial.println("Add first root user");
     users.add(*id, true);
 
     flash(10);

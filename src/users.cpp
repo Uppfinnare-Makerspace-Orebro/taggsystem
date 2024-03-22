@@ -3,10 +3,10 @@
 #include <Arduino.h>
 #endif
 
-void User::show() {
+void User::show() const {
 #if __has_include(<Arduino.h>)
     // Print the array in hex format
-    for (auto elem : UID.data) {
+    for (auto elem : id().data) {
         Serial.print("0x");
         if (elem < 0x10) {
             Serial.print("0"); // Print leading zero for single digit hex values
@@ -16,78 +16,69 @@ void User::show() {
 #endif
 }
 
-User *Users::find(UIDt uid) {
-    for (User &user : users) {
-        if (user == uid) {
-            return &user;
+UserRef Users::find(UIDt uid) {
+    for (size_t i = 0; i < N_USERS; ++i) {
+        auto ref = UserRef{i};
+        if (*ref == uid) {
+            return ref;
         }
     }
-    return nullptr;
+    return {};
 }
 
-User *Users::findAdmin(UIDt uid) {
-    if (auto *user = find(uid)) {
-        if (user->isAdmin()) {
-            return user;
+UserRef Users::findAdmin(UIDt uid) {
+    if (auto ref = find(uid)) {
+        if (ref.get().isAdmin()) {
+            return ref;
         }
     }
 
-    return nullptr;
+    return {};
 }
 
 bool Users::add(UIDt uid, bool isAdmin) {
-    if (auto *user = find(uid)) {
-        if (isAdmin && !user->isAdmin()) {
-            user->isAdmin(true);
-            _isChanged = true;
+    if (auto ref = find(uid)) {
+        auto user = ref.get();
+        if (isAdmin && !user.isAdmin()) {
+            del(user.id());
+            add(user.id(), true);
             return true;
         }
         return false;
     }
-    for (User &user : users) {
-        if (user == BADUSER) {
-            user = User{uid, isAdmin};
-            _isChanged = true;
+
+    for (size_t i = 0; i < N_USERS; ++i) {
+        auto ref = UserRef{i};
+        if (!ref) {
+            ref = User{uid, isAdmin};
             return true;
         }
     }
+
     return false;
 }
 
 bool Users::del(UIDt uid) {
-    if (auto *user = find(uid)) {
-        *user = User{};
-        _isChanged = true;
+    if (auto user = find(uid)) {
+        user = User{};
         return true;
     }
     return false;
 }
 
-void Users::show() {
-    for (User &user : users) {
-        if (!(user == BADUSER)) {
-            user.show();
+void Users::show() const {
+    for (size_t i = 0; i < N_USERS; ++i) {
+        auto ref = UserRef{i};
+        if (ref) {
+            ref.get().show();
         }
     }
 }
 
-void Users::save(OutArchive &arch) {
-    for (auto &user : users) {
-        user.save(arch);
-    }
-    _isChanged = false;
-}
-
-void Users::load(InArchive &arch) {
-    for (auto &user : users) {
-        user.load(arch);
-    }
-    _isChanged = false;
-}
-
 bool Users::isEmpty() const {
-    for (auto &user : users) {
-        if (user != BADUSER) {
+    for (size_t i = 0; i < N_USERS; ++i) {
+        auto ref = UserRef{i};
+        if (ref) {
             return false;
         }
     }
@@ -97,8 +88,9 @@ bool Users::isEmpty() const {
 
 int Users::count() const {
     int count = 0;
-    for (auto &user : users) {
-        if (user != BADUSER) {
+    for (size_t i = 0; i < N_USERS; ++i) {
+        auto ref = UserRef{i};
+        if (ref) {
             ++count;
         }
     }

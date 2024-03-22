@@ -1,10 +1,11 @@
 #include "archive.h"
 #include "led.h"
+#include "users.h"
 #include <array>
 
 namespace {
 
-auto eepromData = std::array<uint8_t, 10000>{};
+auto eepromData = std::array<uint8_t, User::size() * N_USERS>{};
 
 }
 
@@ -18,3 +19,7 @@ uint8_t InArchive::read() {
 }
 
 void flash(int num, int delayMs) {}
+
+void resetEeprom() {
+    eepromData.fill(0xff);
+}
