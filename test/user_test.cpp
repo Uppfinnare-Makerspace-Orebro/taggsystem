@@ -40,34 +40,6 @@ TEST(UserTest, MultipleUsers) {
     EXPECT_FALSE(users.find(userData2));
 }
 
-// TEST(UserTest, Archive) {
-//     {
-//         auto users = Users{};
-
-//         users.add(userData1);
-//         EXPECT_TRUE(users.isChanged());
-
-//         users.add(userData2, true);
-//         EXPECT_TRUE(users.isChanged());
-
-//         auto arch = OutArchive{};
-//         users.save(arch);
-
-//         EXPECT_FALSE(users.isChanged());
-//     }
-//     {
-//         auto users = Users{};
-//         auto arch = InArchive{};
-//         users.load(arch);
-
-//         EXPECT_FALSE(users.isChanged());
-
-//         EXPECT_TRUE(users.find(userData1));
-//         EXPECT_FALSE(users.findAdmin(userData1));
-//         EXPECT_TRUE(users.findAdmin(userData2));
-//     }
-// }
-
 TEST(UserTest, IsEmpty) {
     resetEeprom();
     auto users = Users{};
