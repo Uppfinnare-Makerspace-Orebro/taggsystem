@@ -1,3 +1,4 @@
+#include "Arduino.h"
 #include "archive.h"
 #include "cardreader.h"
 #include "led.h"
@@ -30,16 +31,32 @@ constexpr auto ledPin = 4;
 auto reader = CardReader{SS_PIN, RST_PIN};
 
 auto users = Users{};
-auto state = State{};
+auto state = State{users};
+
+bool previousButtonState = false;
 
 } // namespace
 
-bool isButtonPressed() {
-    return digitalRead(buttonIn);
+void handleButtonPress(State &state) {
+    auto buttonState = digitalRead(buttonIn);
+    if (buttonState) {
+        if (previousButtonState != buttonState) {
+            delay(100); // Dumb debouncing
+            state.onButtonPress();
+        }
+    }
+    else {
+        if (previousButtonState != buttonState) {
+            delay(100);
+            state.onButtonRelease();
+        }
+    }
+    previousButtonState = buttonState;
 }
 
 void setup() {
     initEeprom();
+    state.init();
     pinMode(buttonIn, INPUT_PULLUP);
     pinMode(relayPin, OUTPUT);
     initLed(ledPin);
@@ -51,22 +68,22 @@ void setup() {
 }
 
 void loop() {
-    Serial.println("loop()");
     digitalWrite(relayPin, 0);
 
-    auto card = reader.read();
+    handleButtonPress(state);
 
-    if (card) {
-        state.handle(users, nullptr, isButtonPressed());
-        return;
+    if (auto card = reader.read()) {
+        state.onCardShowed(*card);
     }
 
-    bool relayState = state.handle(users, &*card, isButtonPressed());
-
-    digitalWrite(relayPin, relayState);
-
-    if (relayState) {
-        // Serial.println("relay active");
+    if (state.getRelayState()) {
+        setLed(true);
+        digitalWrite(relayPin, HIGH);
+        Serial.println("Open relay");
         delay(1000);
+        digitalWrite(relayPin, LOW);
+        setLed(false);
     }
+
+    state.flashLed();
 }

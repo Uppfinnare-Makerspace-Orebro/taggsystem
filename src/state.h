@@ -2,10 +2,13 @@
 
 #include "uidt.h"
 #include "users.h"
+#include <utility>
 
-struct State {
+class State {
+private:
     enum StateNum {
         Start = 0,
+        ButtonPressed,
         AddUser,
         AddAdmin,
         RemoveUser,
@@ -13,25 +16,32 @@ struct State {
         NoUsers,
     };
 
-    StateNum state = Start;
-    bool isWaitingForButtonRelease = false;
-    UIDt currentId;
+    StateNum _state = Start;
+    bool _isRelayOpen = false;
+    Users *_users = nullptr;
 
-    void wait();
     void reset();
 
-    /// Note that id can be nullptr
-    /// Returns value of relay pin
-    bool handle(Users &users, const UIDt *id, bool isPressed);
+public:
+    State(Users &users)
+        : _users(&users) {}
 
-private:
-    /// This is the only mode that can turn of the relay hence the only function
-    /// that returns true
-    bool handleStart(Users &users, const UIDt *id, bool isPressed);
-    void handleAddUser(Users &users, const UIDt *id, bool isPressed);
-    void handleAddAdmin(Users &users, const UIDt *id, bool isPressed);
-    void handleRemoveUser(Users &users, const UIDt *id, bool isPressed);
+    void init() {
+        if (_users->isEmpty()) {
+            _state = NoUsers;
+        }
+    }
 
-    /// If no user is set, the first user showing it's id will be admin
-    void handleNoUser(Users &users, const UIDt *id, bool isPressed);
+    /// Get the state of the relay output
+    bool getRelayState();
+
+    /// flash an appropriate amount of times on the led to display the current
+    /// state
+    void flashLed();
+
+    /// Event that happends to the state
+    void onButtonPress();
+    void onButtonRelease();
+    /// @param id is assumed to be valid
+    void onCardShowed(const UIDt id);
 };

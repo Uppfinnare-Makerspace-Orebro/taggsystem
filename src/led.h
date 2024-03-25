@@ -3,3 +3,4 @@
 void initLed(int pin);
 
 void flash(int num, int delayMs = 100);
+void setLed(bool value);
