@@ -23,17 +23,25 @@ BasicOptional<UIDt> CardReader::read() {
     // Reset the loop if no new card present on the sensor/reader. This saves
     // the entire process when idle.
     if (!mfrc522.PICC_IsNewCardPresent()) {
+        hadCard = false;
         return {};
     }
 
     // Select one of the cards
     if (!mfrc522.PICC_ReadCardSerial()) {
+        hadCard = false;
         return {};
     }
 
     auto id = UIDt{};
 
+    if (hadCard) {
+        return {};
+    }
+
     memcpy(id.data, mfrc522.uid.uidByte, 10);
+
+    hadCard = true;
 
     return id;
 }

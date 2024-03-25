@@ -21,3 +21,7 @@ void initLed(int pin) {
     ledPin = pin;
     pinMode(ledPin, OUTPUT);
 }
+
+void setLed(bool value) {
+    digitalWrite(ledPin, value);
+}

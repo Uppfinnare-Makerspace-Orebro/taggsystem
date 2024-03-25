@@ -3,159 +3,98 @@
 #include "print.h"
 #include "uidt.h"
 
-void State::wait() {
-    isWaitingForButtonRelease = true;
-}
-
 void State::reset() {
-    currentId = {};
-    state = Start;
+    _state = Start;
 }
 
-bool State::handle(Users &users, const UIDt *id, bool isPressed) {
-    /// If the button was pressed, we need to wait for it to be released
-    if (isWaitingForButtonRelease && (isPressed || id)) {
-        return false;
-    }
+bool State::getRelayState() {
+    return std::exchange(_isRelayOpen, false);
+}
 
-    isWaitingForButtonRelease = false;
-
-    // Serial.println("num users:");
-    // Serial.println(users.count());
-    if (users.isEmpty()) {
-        // Serial.println("no users");
-        state = NoUsers;
-    }
-
-    switch (state) {
+void State::flashLed() {
+    switch (_state) {
     case Start:
-        return handleStart(users, id, isPressed);
+        // Do nothing
+        break;
+    case ButtonPressed:
+        ::flash(1, 100);
         break;
     case AddUser:
-        flash(1);
-        handleAddUser(users, id, isPressed);
+        ::flash(2, 100);
         break;
     case AddAdmin:
-        flash(2);
-        handleAddAdmin(users, id, isPressed);
+        ::flash(3, 100);
         break;
     case RemoveUser:
-        flash(3);
-        handleRemoveUser(users, id, isPressed);
+        ::flash(4, 100);
         break;
-
     case NoUsers:
-        handleNoUser(users, id, isPressed);
+        ::flash(10, 100);
         break;
     }
-
-    return false;
 }
 
-bool State::handleStart(Users &users, const UIDt *id, bool isPressed) {
-    // Serial.println("start()");
-    // Serial.println("hasId?");
-    // Serial.println(!!id);
-    // Serial.println("pressed:");
-    // Serial.println(isPressed);
-    if (!id) {
-        return false;
+void State::onButtonPress() {
+    switch (_state) {
+    case Start:
+        _state = ButtonPressed;
+        break;
+    case ButtonPressed:
+        // Show card while button is pressed to enter menu
+        break;
+    case AddUser:
+        _state = AddAdmin;
+        break;
+    case AddAdmin:
+        _state = RemoveUser;
+        break;
+    case RemoveUser:
+        _state = Start;
+        break;
+    case NoUsers:
+        break;
     }
-
-    if (!users.find(*id)) {
-        // Serial.print("User ");
-        // Serial.print(id);
-        // Serial.println("not found");
-        return false;
-    }
-
-    // Only admins can access the menu
-    if (!users.findAdmin(*id)) {
-        wait();
-        return true;
-    }
-
-    if (isPressed) {
-        wait();
-        currentId = *id;
-        state = AddUser;
-        return false;
-    }
-
-    wait();
-    return true;
 }
 
-void State::handleAddUser(Users &users, const UIDt *id, bool isPressed) {
-    if (!id) {
-        if (isPressed) {
-            state = AddAdmin;
-            wait();
+void State::onButtonRelease() {
+    switch (_state) {
+    case Start:
+        break;
+    case ButtonPressed:
+        _state = Start;
+        break;
+    default:
+        break;
+    }
+}
+
+void State::onCardShowed(const UIDt id) {
+    switch (_state) {
+    case Start:
+        if (_users->find(id)) {
+            _isRelayOpen = true;
         }
-        return;
-    }
-
-    /// The first user has probably not removed their tag
-    if (*id == currentId) {
-        return;
-    }
-
-    // Serial.println("Added user");
-    users.add(*id);
-    reset();
-    wait();
-}
-
-void State::handleAddAdmin(Users &users, const UIDt *id, bool isPressed) {
-    if (!id) {
-        if (isPressed) {
-            state = RemoveUser;
-            wait();
+        break;
+    case ButtonPressed:
+        if (_users->findAdmin(id)) {
+            _state = AddUser;
         }
-        return;
+        break;
+    case AddUser:
+        _users->add(id);
+        _state = Start;
+        break;
+    case AddAdmin:
+        _users->add(id, true);
+        _state = Start;
+        break;
+    case RemoveUser:
+        _users->del(id);
+        _state = Start;
+        break;
+    case NoUsers:
+        _users->add(id, true);
+        _state = Start;
+        break;
     }
-    /// The first user has probably not removed their tag
-    if (*id == currentId) {
-        return;
-    }
-
-    // Serial.println("Added admin");
-    users.add(*id, true);
-    reset();
-    wait();
-}
-
-void State::handleRemoveUser(Users &users, const UIDt *id, bool isPressed) {
-    if (!id) {
-        if (isPressed) {
-            reset();
-            wait();
-        }
-        return;
-    }
-
-    /// Removing yourself is not allowed (since it could lead to no admin being
-    /// active)
-    if (*id == currentId) {
-        return;
-    }
-
-    // Serial.println("Deleted user");
-    users.del(*id);
-    reset();
-    wait();
-}
-
-void State::handleNoUser(Users &users, const UIDt *id, bool isPressed) {
-    if (!id) {
-        flash(3, 200);
-        return;
-    }
-
-    // Serial.println("Add first root user");
-    users.add(*id, true);
-
-    flash(10);
-    reset();
-    wait();
 }

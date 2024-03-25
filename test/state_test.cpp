@@ -6,44 +6,32 @@
 constexpr auto userData1 = UIDt{0x01};
 constexpr auto userData2 = UIDt{0x02};
 
-namespace {
-
-/// Repeating because that is what is probably going to happend in reality
-bool repeatMessage(State &state, Users &users, const UIDt *id, bool isPressed) {
-    bool isEnabled = false;
-
-    for (int i = 0; i < 100; ++i) {
-        if (state.handle(users, id, isPressed)) {
-            isEnabled = true;
-        }
-    }
-
-    return isEnabled;
-}
-
-} // namespace
-
 TEST(StateTest, OpenRelay) {
     resetEeprom();
     auto users = Users{};
-    auto state = State{};
+    auto state = State{users};
 
     users.add(userData1);
 
-    EXPECT_FALSE(repeatMessage(state, users, &userData2, false));
-    EXPECT_TRUE(repeatMessage(state, users, &userData1, false));
+    state.onCardShowed(userData2);
+    EXPECT_FALSE(state.getRelayState());
+    state.onCardShowed(userData1);
+    EXPECT_TRUE(state.getRelayState());
 }
 
 TEST(StateTest, AddUser) {
     resetEeprom();
     auto users = Users{};
-    auto state = State{};
+    auto state = State{users};
 
     EXPECT_TRUE(users.add(userData1, true));
 
-    EXPECT_FALSE(repeatMessage(state, users, &userData1, true));
-    EXPECT_FALSE(repeatMessage(state, users, nullptr, false));
-    EXPECT_FALSE(repeatMessage(state, users, &userData2, false));
+    state.onButtonPress();
+    state.onCardShowed(userData1);
+    state.onButtonRelease();
+
+    state.onCardShowed(userData2);
+    EXPECT_FALSE(state.getRelayState());
 
     EXPECT_TRUE(users.find(userData2));
 }
@@ -51,15 +39,23 @@ TEST(StateTest, AddUser) {
 TEST(StateTest, AddAdmin) {
     resetEeprom();
     auto users = Users{};
-    auto state = State{};
+    auto state = State{users};
 
     EXPECT_TRUE(users.add(userData1, true));
 
-    EXPECT_FALSE(repeatMessage(state, users, &userData1, true));
-    EXPECT_FALSE(repeatMessage(state, users, nullptr, false));
-    EXPECT_FALSE(repeatMessage(state, users, nullptr, true));
-    EXPECT_FALSE(repeatMessage(state, users, nullptr, false));
-    EXPECT_FALSE(repeatMessage(state, users, &userData2, false));
+    EXPECT_FALSE(state.getRelayState());
+
+    state.onButtonPress();
+    state.onCardShowed(userData1);
+    state.onButtonRelease();
+    EXPECT_FALSE(state.getRelayState());
+
+    state.onButtonPress();
+    state.onButtonRelease();
+    EXPECT_FALSE(state.getRelayState());
+
+    state.onCardShowed(userData2);
+    EXPECT_FALSE(state.getRelayState());
 
     EXPECT_TRUE(users.find(userData2));
     EXPECT_TRUE(users.findAdmin(userData2));
@@ -68,18 +64,24 @@ TEST(StateTest, AddAdmin) {
 TEST(StateTest, RemoveUser) {
     resetEeprom();
     auto users = Users{};
-    auto state = State{};
+    auto state = State{users};
 
     EXPECT_TRUE(users.add(userData1, true));
     EXPECT_TRUE(users.add(userData2, false));
 
-    EXPECT_FALSE(repeatMessage(state, users, &userData1, true));
-    EXPECT_FALSE(repeatMessage(state, users, nullptr, false));
-    EXPECT_FALSE(repeatMessage(state, users, nullptr, true));
-    EXPECT_FALSE(repeatMessage(state, users, nullptr, false));
-    EXPECT_FALSE(repeatMessage(state, users, nullptr, true));
-    EXPECT_FALSE(repeatMessage(state, users, nullptr, false));
-    EXPECT_FALSE(repeatMessage(state, users, &userData2, false));
+    state.onButtonPress();
+    state.onCardShowed(userData1);
+    state.onButtonRelease();
+
+    state.onButtonPress();
+    state.onButtonRelease();
+
+    state.onButtonPress();
+    state.onButtonRelease();
+    EXPECT_FALSE(state.getRelayState());
+
+    state.onCardShowed(userData2);
+    EXPECT_FALSE(state.getRelayState());
 
     EXPECT_FALSE(users.find(userData2));
 }
@@ -87,18 +89,23 @@ TEST(StateTest, RemoveUser) {
 TEST(StateTest, PreventFromRemoveOneSelf) {
     resetEeprom();
     auto users = Users{};
-    auto state = State{};
+    auto state = State{users};
 
     EXPECT_TRUE(users.add(userData1, true));
     EXPECT_TRUE(users.add(userData2, false));
 
-    EXPECT_FALSE(repeatMessage(state, users, &userData1, true));
-    EXPECT_FALSE(repeatMessage(state, users, nullptr, false));
-    EXPECT_FALSE(repeatMessage(state, users, nullptr, true));
-    EXPECT_FALSE(repeatMessage(state, users, nullptr, false));
-    EXPECT_FALSE(repeatMessage(state, users, nullptr, true));
-    EXPECT_FALSE(repeatMessage(state, users, nullptr, false));
-    EXPECT_FALSE(repeatMessage(state, users, &userData1, false));
+    state.onButtonPress();
+    state.onCardShowed(userData1);
+    state.onButtonRelease();
+
+    state.onButtonPress();
+    state.onButtonRelease();
+
+    state.onButtonPress();
+    state.onButtonRelease();
+    EXPECT_FALSE(state.getRelayState());
+
+    state.onCardShowed(userData1);
 
     EXPECT_TRUE(users.find(userData2));
 }
@@ -106,9 +113,10 @@ TEST(StateTest, PreventFromRemoveOneSelf) {
 TEST(StateTest, MakeFirstUserAdmin) {
     resetEeprom();
     auto users = Users{};
-    auto state = State{};
+    auto state = State{users};
+    state.init();
 
-    EXPECT_FALSE(repeatMessage(state, users, &userData1, true));
+    state.onCardShowed(userData1);
 
     EXPECT_TRUE(users.find(userData1));
     EXPECT_TRUE(users.findAdmin(userData1));
