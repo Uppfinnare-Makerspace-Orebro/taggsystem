@@ -1,6 +1,7 @@
 #include "cardreader.h"
 #include "SPI.h"
 #include <Arduino.h>
+#include <cstring>
 
 CardReader::CardReader(int ss, int rst)
     : mfrc522(ss, rst) {}

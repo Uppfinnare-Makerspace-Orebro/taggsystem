@@ -43,12 +43,15 @@ void State::onButtonPress() {
         // Show card while button is pressed to enter menu
         break;
     case AddUser:
+        Serial.println("menu: add admin");
         _state = AddAdmin;
         break;
     case AddAdmin:
+        Serial.println("menu: remove user");
         _state = RemoveUser;
         break;
     case RemoveUser:
+        Serial.println("menu: reset");
         _state = Start;
         break;
     case NoUsers:
@@ -77,22 +80,33 @@ void State::onCardShowed(const UIDt id) {
         break;
     case ButtonPressed:
         if (_users->findAdmin(id)) {
+            Serial.println("enter menu: add user");
             _state = AddUser;
         }
         break;
     case AddUser:
-        _users->add(id);
+        if (_users->add(id)) {
+            Serial.println("add user");
+        }
         _state = Start;
         break;
     case AddAdmin:
-        _users->add(id, true);
+        if (_users->add(id, true)) {
+            Serial.println("add admin");
+        }
         _state = Start;
         break;
     case RemoveUser:
-        _users->del(id);
+        if (_users->del(id)) {
+            Serial.println("deleted user");
+        }
+        else {
+            Serial.println("could not delete user");
+        }
         _state = Start;
         break;
     case NoUsers:
+        Serial.println("add first admin user");
         _users->add(id, true);
         _state = Start;
         break;
