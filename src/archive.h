@@ -12,7 +12,7 @@ void initEeprom();
 
 struct OutArchive {
     OutArchive(size_t address)
-        : address(address) {}
+        : address(address + eepromStart) {}
 
     size_t address = {};
 
@@ -21,7 +21,7 @@ struct OutArchive {
 
 struct InArchive {
     InArchive(size_t address)
-        : address(address) {}
+        : address(address + eepromStart) {}
 
     size_t address = {};
 

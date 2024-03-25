@@ -5,7 +5,8 @@
 
 namespace {
 
-auto eepromData = std::array<uint8_t, User::size() * N_USERS>{};
+auto eepromData =
+    std::array<uint8_t, User::size() * N_USERS + eepromStart + 1>{};
 
 }
 

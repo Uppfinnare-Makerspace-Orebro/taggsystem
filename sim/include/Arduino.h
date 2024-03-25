@@ -3,51 +3,51 @@
 #include "archive.h"
 #include "cardreader.h"
 #include "led.h"
+#include "users.h"
 #include <chrono>
-#include <emscripten.h>
+#include <map>
 #include <thread>
 
 constexpr auto INPUT = 1;
 constexpr auto OUTPUT = 2;
+constexpr auto INPUT_PULLUP = 3;
+constexpr auto HIGH = 1;
+constexpr auto LOW = 0;
+
+inline std::map<int, int> emulatedPins;
+inline UIDt emulatedCard;
 
 inline void delay(int ms) {
     std::this_thread::sleep_for(std::chrono::milliseconds{ms});
 }
 
 inline int digitalRead(int pin) {
-    return EM_ASM_INT({ return digitalRead($0); }, pin);
+    return emulatedPins[pin];
 }
 
 inline void digitalWrite(int pin, int value) {
-    EM_ASM({digitalWrite($0, $1)}, pin, value);
+    emulatedPins[pin] = value;
 }
 
 inline void pinMode(int pin, int value) {
     // ignore
 }
 
-inline CardReader::CardReader(int ss, int rst) {
-    // ignore
-}
+// inline BasicOptional<UIDt> CardReader::read() {
+//     // auto card = EM_ASM_INT({ return getCard(); });
+//     if (emulatedCard != BADUSER) {
+//         hadCard = false;
+//         return {};
+//     }
 
-inline BasicOptional<UIDt> CardReader::read() {
-    auto card = EM_ASM_INT({ return getCard(); });
-    if (card == 0) {
-        hadCard = false;
-        return {};
-    }
+//     if (hadCard) {
+//         return {};
+//     }
 
-    if (hadCard) {
-        return {};
-    }
+//     hadCard = true;
 
-    auto id = UIDt{};
-    id.data[0] = card;
-
-    hadCard = true;
-
-    return id;
-}
+//     return emulatedCard;
+// }
 
 void setup();
 void loop();
@@ -66,29 +66,12 @@ struct {
     void println(const T &value, int format = 0) {
         std::cout << value << std::endl;
     }
+
+    void begin(int rate) {}
+
+    operator bool() {
+        return true;
+    }
 } Serial;
 
-#include <array>
-
-inline auto eepromData = [] {
-    auto arr = std::array<uint8_t, 10000>{};
-    for (auto &c : arr) {
-        c = 0xff;
-    }
-    return arr;
-}();
-
-inline void OutArchive::write(uint8_t value) {
-    eepromData.at(address) = value;
-    ++address;
-}
-
-inline uint8_t InArchive::read() {
-    return eepromData.at(address++);
-}
-
-inline void initLed(int pin) {}
-
-inline void flash(int num, int delayMs) {
-    EM_ASM({ flashLed($0, $1); }, num, delayMs);
-}
+#define F(x) x
