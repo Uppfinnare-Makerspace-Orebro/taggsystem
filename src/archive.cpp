@@ -3,11 +3,19 @@
 #include "users.h"
 #include <Arduino.h>
 
-void OutArchive::write(uint8_t value) {
+namespace {
+
+void writeEeprom(size_t address, uint8_t value) {
     uint8_t currentValue = EEPROM.read(address);
     if (currentValue != value) {
         EEPROM.write(address, value);
     }
+}
+
+} // namespace
+
+void OutArchive::write(uint8_t value) {
+    writeEeprom(address, value);
 
     ++address;
 }
@@ -33,12 +41,12 @@ void initEeprom() {
     }
 
     for (size_t i = 0; i < eepromVersionString.size(); ++i) {
-        EEPROM.write(i, eepromVersionString[i]);
+        writeEeprom(i, eepromVersionString[i]);
     }
 
     auto usedEepromSize = User::size() * N_USERS + eepromStart;
 
     for (size_t i = eepromVersionString.size() + 1; i < usedEepromSize; ++i) {
-        EEPROM.write(i, 0xff);
+        writeEeprom(i, 0xff);
     }
 }
