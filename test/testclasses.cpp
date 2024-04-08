@@ -15,6 +15,10 @@ void OutArchive::write(uint8_t value) {
     ++address;
 }
 
+void OutArchive::commit() {
+    ///
+}
+
 uint8_t InArchive::read() {
     return eepromData.at(address++);
 }

@@ -43,5 +43,5 @@ public:
     void onButtonPress();
     void onButtonRelease();
     /// @param id is assumed to be valid
-    void onCardShowed(const UIDt id);
+    bool onCardShowed(const UIDt id);
 };
