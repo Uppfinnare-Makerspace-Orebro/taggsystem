@@ -10,6 +10,10 @@ const auto eepromStart = eepromVersionString.size() + 1;
 /// Reset eeprom if it is not initialized with the right version string
 void initEeprom();
 
+/// This is used for esp32 since it writes whole blocks to flash memory
+/// If not used, the data will not be saved
+void commitEeprom();
+
 struct OutArchive {
     OutArchive(size_t address)
         : address(address + eepromStart) {}
@@ -17,6 +21,9 @@ struct OutArchive {
     size_t address = {};
 
     void write(uint8_t value);
+
+    // For devices that emulates eeprom on flash
+    void commit();
 };
 
 struct InArchive {
