@@ -103,6 +103,7 @@ struct UserRef {
     void operator=(const User &user) {
         auto arch = OutArchive{index * User::size()};
         user.save(arch);
+        arch.commit();
     }
 
     operator bool() const {

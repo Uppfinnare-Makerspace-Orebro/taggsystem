@@ -20,6 +20,10 @@ void OutArchive::write(uint8_t value) {
     ++address;
 }
 
+void OutArchive::commit() {
+    commitEeprom();
+}
+
 uint8_t InArchive::read() {
     uint8_t value = EEPROM.read(address);
     ++address;
@@ -27,6 +31,11 @@ uint8_t InArchive::read() {
 }
 
 void initEeprom() {
+    const auto usedEepromSize = User::size() * N_USERS + eepromStart;
+    Serial.println("in initEeprom():");
+#if ESP32
+    EEPROM.begin(usedEepromSize);
+#endif
     bool isInitialized = true;
 
     for (size_t i = 0; i < eepromVersionString.size(); ++i) {
@@ -37,16 +46,25 @@ void initEeprom() {
     }
 
     if (isInitialized) {
+        Serial.println("EEPROM: already initialized");
         return;
     }
+
+    Serial.println("EEPROM: reinitializing");
 
     for (size_t i = 0; i < eepromVersionString.size(); ++i) {
         writeEeprom(i, eepromVersionString[i]);
     }
 
-    auto usedEepromSize = User::size() * N_USERS + eepromStart;
-
     for (size_t i = eepromVersionString.size() + 1; i < usedEepromSize; ++i) {
         writeEeprom(i, 0xff);
     }
+
+    commitEeprom();
+}
+
+void commitEeprom() {
+#ifdef ESP32
+    EEPROM.commit();
+#endif
 }
