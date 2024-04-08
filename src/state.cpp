@@ -73,12 +73,12 @@ void State::onButtonRelease() {
     }
 }
 
-void State::onCardShowed(const UIDt id) {
+bool State::onCardShowed(const UIDt id) {
     switch (_state) {
     case Start:
         if (_users->find(id)) {
             _isRelayOpen = true;
-            return; // No delay
+            return false; // No delay
         }
         else {
             Serial.println("user not registered");
@@ -126,5 +126,5 @@ void State::onCardShowed(const UIDt id) {
         _state = Start;
         break;
     }
-    delay(1000);
+    return true;
 }

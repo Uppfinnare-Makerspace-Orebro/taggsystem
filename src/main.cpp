@@ -69,10 +69,10 @@ void loop() {
 
     if (auto card = reader.read()) {
         // Serial.println("card shown");
-        state.onCardShowed(*card);
+        if (state.onCardShowed(*card)) {
+            delay(1000);
+        }
     }
-
-    // Serial.println("Remove this: loop()");
 
     if (state.getRelayState()) {
         setLed(true);
