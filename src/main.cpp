@@ -58,6 +58,12 @@ void handleButtonPress(State &state) {
 }
 
 void setup() {
+    Serial.begin(9600); // Initialize serial communications with the PC
+    while (!Serial)
+        ; // Do nothing if no serial port is opened (added for Arduinos based on
+          // ATMEGA32U4)
+    delay(2000); // Wait for the user to connect with monitor
+    Serial.println("setup()");
     initEeprom();
     state.init();
     pinMode(pins.buttonIn, INPUT_PULLUP);
