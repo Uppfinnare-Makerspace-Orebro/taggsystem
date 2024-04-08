@@ -38,6 +38,7 @@ void State::onButtonPress() {
     switch (_state) {
     case Start:
         _state = ButtonPressed;
+        Serial.println("menu: button pressed");
         break;
     case ButtonPressed:
         // Show card while button is pressed to enter menu
@@ -65,6 +66,7 @@ void State::onButtonRelease() {
         break;
     case ButtonPressed:
         _state = Start;
+        Serial.println("menu: button released without id shown");
         break;
     default:
         break;
@@ -76,12 +78,19 @@ void State::onCardShowed(const UIDt id) {
     case Start:
         if (_users->find(id)) {
             _isRelayOpen = true;
+            return; // No delay
+        }
+        else {
+            Serial.println("user not registered");
         }
         break;
     case ButtonPressed:
         if (_users->findAdmin(id)) {
             Serial.println("enter menu: add user");
             _state = AddUser;
+        }
+        else {
+            Serial.println("menu: not admin, will not enter menu");
         }
         break;
     case AddUser:
@@ -103,7 +112,13 @@ void State::onCardShowed(const UIDt id) {
         else {
             Serial.println("could not delete user");
         }
-        _state = Start;
+
+        if (_users->count() == 0) {
+            _state = NoUsers;
+        }
+        else {
+            _state = Start;
+        }
         break;
     case NoUsers:
         Serial.println("add first admin user");
@@ -111,4 +126,5 @@ void State::onCardShowed(const UIDt id) {
         _state = Start;
         break;
     }
+    delay(1000);
 }
