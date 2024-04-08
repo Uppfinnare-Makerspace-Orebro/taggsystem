@@ -6,26 +6,32 @@ Install the `MFRC522` - library for arduino
 
 # Connections in prototype
 
-## NodeMCU
+## Esp32
 
-See `main.cpp`
+| component pin | port on esp32 | 
+| --        | ---         |
+| LED red   | pin 2 (out) - also builtin led |
+| LED black | GND       |
+| Button 1  | 16          |
+| Button 2  | GND          |
+| relay     | 22          |
+| RC VCC    | 3.3V        |
+| RC RST    | 4           |
+| RC GND    | GND         |
+| RC MISO   | 19          |
+| RC MOSI   | 23          |
+| RC SCK    | 18          |
+| RC NSS    | 5           |
 
-## Arduino
-LED pin 6 (out)
-
-button signal in 7
-
-button activation pin 8 (should be always on)
-
-relay pin 2
 
 # States
 
  0. Default. Identified user or admin will signal to the relay, holding button at the same time triggers state 1
- 1. Admin state - Add user, button triggers next state, tag adds user
- 2. Admin state - Add admin, button triggers next state, tag adds admin
- 3. Admin state - Remove admin, button triggers next resets to next state, tag deletes user
- 4. Trigger if no user is set, then the first user showing its card will be admin
+ 1. Button is pressed when no user is identified
+ 2. Admin state - Add user, button triggers next state, tag adds user
+ 3. Admin state - Add admin, button triggers next state, tag adds admin
+ 4. Admin state - Remove admin, button triggers next resets to next state, tag deletes user
+ 5. Trigger if no user is set, then the first user showing its card will be admin
 
 # Build arduino
 
@@ -51,10 +57,15 @@ platformio run -e esp32 -t upload` to build and upload the program to the arduin
 ```
 
 
-Build and run nodemcu
+Build and run esp32
 ```bash
-platformio run -e nodemcu --target upload
+platformio run -e esp32 --target upload
 ```
+
+
+## Todo:
+- [ ] Connect and test relay
+- [ ] Asynchronous flash that does not delay state logic
 
 ## Advanced: Build test project (ubuntu linux pc tests, without a physical device)
 
@@ -81,11 +92,5 @@ In the build directory
 ctest .
 ```
 
-## Advanced: Build emscripten (web simulator)
-
-Install emscripten
-
-run like the simulator above but replace `cmake` with `emcmake cmake`...
-and `make` with `emmake make`
 
 
