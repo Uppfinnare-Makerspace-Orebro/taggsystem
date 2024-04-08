@@ -24,10 +24,10 @@ constexpr PinConfiguration getPinConfiguration() {
     // SCK = 18
     config.ssPin = 5;
 
-    // Builtin led is on D2
+    // Builtin led is on 2
 
     config.buttonIn = 16;
-    config.relayPin = 4;
+    config.relayPin = 22;
     config.ledPin = 2;
 #warning "this is esp32"
 
