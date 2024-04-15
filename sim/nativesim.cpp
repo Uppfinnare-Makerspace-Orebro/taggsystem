@@ -1,19 +1,49 @@
 #include "pinconfiguration.h"
 #include <Arduino.h>
 #include <MFRC522.h>
+#include <chrono>
 #include <thread>
 
-int main(int argc, char *argv[]) {
-    auto pins = getPinConfiguration();
+namespace {
 
+unsigned char firstIdChar = 0;
+auto pins = getPinConfiguration();
+
+void drawText() {
+    std::cout << "\n-------------------------------------------------\n";
+    std::cout << "current card "
+              << (firstIdChar ? std::to_string(firstIdChar) : "none") << "\n";
+    std::cout << "led status: " << emulatedPins[pins.ledPin] << "\n";
+    std::cout << "relay status: " << emulatedPins[pins.relayPin] << "\n";
+    std::cout << "button status: " << !emulatedPins[pins.buttonIn] << "\n";
+    std::cout << "b: toggle button, 0: no card, 1-5 select card\n";
+    std::cout << "=================================================\n";
+    std::cout << std::flush;
+}
+
+} // namespace
+
+int main(int argc, char *argv[]) {
     setup();
+
+    emulatedPins[pins.buttonIn] = true; // True is off
 
     bool isRunning = true;
 
     auto t = std::thread{[&isRunning]() {
         while (isRunning) {
             loop();
-            std::this_thread::sleep_for(std::chrono::milliseconds(100));
+            std::this_thread::sleep_for(std::chrono::milliseconds(10));
+        }
+    }};
+
+    auto displayThread = std::thread{[&isRunning]() {
+        while (isRunning) {
+            if (isPinChanged) {
+                isPinChanged = false;
+                drawText();
+            }
+            std::this_thread::sleep_for(std::chrono::milliseconds(2));
         }
     }};
 
@@ -41,18 +71,14 @@ int main(int argc, char *argv[]) {
                 break;
             }
         }
-        auto first = *MFRC522::uid.uidByte;
-        std::cout << "current card " << (first ? std::to_string(first) : "none")
-                  << "\n";
-        std::cout << "led status: " << emulatedPins[pins.ledPin] << "\n";
-        std::cout << "relay status: " << emulatedPins[pins.relayPin] << "\n";
-        std::cout << "button status: " << emulatedPins[pins.buttonIn] << "\n";
-        std::cout << "b: toggle button, 0: no card, 1-5 select card\n";
-        std::cout << std::flush;
+        std::this_thread::sleep_for(std::chrono::milliseconds(20));
+        firstIdChar = *MFRC522::uid.uidByte;
+        drawText();
     }
 
     isRunning = false;
     t.join();
+    displayThread.join();
 
     return 0;
 }

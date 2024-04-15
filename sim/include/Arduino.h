@@ -5,6 +5,7 @@
 #include "led.h"
 #include "users.h"
 #include <chrono>
+#include <iostream>
 #include <map>
 #include <thread>
 
@@ -15,6 +16,7 @@ constexpr auto HIGH = 1;
 constexpr auto LOW = 0;
 
 inline std::map<int, int> emulatedPins;
+inline bool isPinChanged = false;
 inline UIDt emulatedCard;
 
 inline void delay(int ms) {
@@ -26,33 +28,26 @@ inline int digitalRead(int pin) {
 }
 
 inline void digitalWrite(int pin, int value) {
-    emulatedPins[pin] = value;
+    auto &pinValue = emulatedPins[pin];
+
+    if (pinValue != value) {
+        pinValue = value;
+        isPinChanged = true;
+        std::cout << "pin " << pin << " set to " << value << std::endl;
+    }
 }
 
 inline void pinMode(int pin, int value) {
     // ignore
 }
 
-// inline BasicOptional<UIDt> CardReader::read() {
-//     // auto card = EM_ASM_INT({ return getCard(); });
-//     if (emulatedCard != BADUSER) {
-//         hadCard = false;
-//         return {};
-//     }
-
-//     if (hadCard) {
-//         return {};
-//     }
-
-//     hadCard = true;
-
-//     return emulatedCard;
-// }
+inline unsigned long millis() {
+    auto time = std::chrono::system_clock::now().time_since_epoch();
+    return std::chrono::duration_cast<std::chrono::milliseconds>(time).count();
+}
 
 void setup();
 void loop();
-
-#include <iostream>
 
 constexpr auto HEX = 10;
 

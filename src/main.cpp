@@ -21,6 +21,8 @@ auto state = State{users};
 
 bool previousButtonState = false;
 
+unsigned long previousMillis = 0;
+
 } // namespace
 
 void handleButtonPress(State &state) {
@@ -84,4 +86,10 @@ void loop() {
     }
 
     state.flashLed();
+
+    auto currentMillis = millis();
+    auto passedMilis = currentMillis - previousMillis;
+    previousMillis = currentMillis;
+
+    ::updateLed(passedMilis);
 }
