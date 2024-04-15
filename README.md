@@ -11,10 +11,12 @@ Install the `MFRC522` - library for arduino
 | component pin | port on esp32 | 
 | --        | ---         |
 | LED red   | pin 2 (out) - also builtin led |
-| LED black | GND       |
+| LED black | GND         |
 | Button 1  | 16          |
-| Button 2  | GND          |
-| relay     | 22          |
+| Button 2  | GND         |
+| relay s   | 22          |
+| relay +   | 3,3V        |
+| relay -   | GND         |
 | RC VCC    | 3.3V        |
 | RC RST    | 4           |
 | RC GND    | GND         |
